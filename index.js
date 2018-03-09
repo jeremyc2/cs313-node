@@ -8,3 +8,23 @@ express()
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+
+  var WebSocketServer = require('ws').Server,
+      wss = new WebSocketServer({
+          port: 8080
+      });
+
+  wss.broadcast = function broadcast(data) {
+    wss.clients.forEach(function each(client) {
+          client.send(data);
+          console.log('broadcasting... ');
+      });
+  };
+
+  wss.on('connection', function(ws) {
+      ws.on('message', function(msg) {
+          console.log('message ' + msg);
+          data = JSON.parse(msg);
+          if (data.message) wss.broadcast(data.message);
+      });
+  });

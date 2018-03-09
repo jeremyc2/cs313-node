@@ -2,11 +2,48 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Homepage</title>
+    <title>Gif With Friends</title>
     <% include ../partials/header.ejs %>
   </head>
   <body>
     <% include ../partials/nav.ejs %>
-    Hello buds!! Wassup?
+    <div class="alert alert-info alert-dismissible">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <strong>Welcome!</strong>  Gif With Friends
+      is a new game where players take turns asking and answering simple "get to know
+      you questions." The catch is you can only respond to questions with a GIF. Let's get
+      creative!
+    </div>
+    <div class="well">
+      <ul id="messages"></ul>
+    </div>
+    <br>
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Enter a question...">
+      <span class="input-group-btn">
+        <button class="btn btn-primary" id="send" type="button">Send</button>
+      </span>
+    </div>
+    <% include ../partials/footer.ejs %>
+
+    <script>
+        websocket = new WebSocket("ws://localhost:8080/");
+        $('#send').click(function() {
+            // name = $('#name').val() ? $('#name').val() : 'Anonymous';
+            websocket.send(JSON.stringify({
+                message: $('.form-control').val()
+            }));
+            $('.form-control').focus();
+            $('.form-control').val('');
+            return false;
+        });
+
+        websocket.onmessage = function(evt) {
+          $('#messages').append($('<li>').html(evt.data));
+        };
+
+        websocket.onerror = function(evt) {
+        };
+    </script>
   </body>
 </html>
