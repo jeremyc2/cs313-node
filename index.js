@@ -9,6 +9,10 @@ express()
   .get('/', (req, res) => res.render('pages/index'))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
+
+    var GphApiClient = require('giphy-js-sdk-core')
+    client = GphApiClient("")
+
   var WebSocketServer = require('ws').Server,
       wss = new WebSocketServer({
           port: 8080
@@ -28,3 +32,14 @@ express()
           if (data.message) wss.broadcast(data.message);
       });
   });
+
+//   /// Gif Search
+// client.search('gifs', {"q": "cats"})
+//   .then((response) => {
+//     response.data.forEach((gifObject) => {
+//       console.log(gifObject)
+//     })
+//   })
+//   .catch((err) => {
+//
+//   })
