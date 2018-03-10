@@ -4,6 +4,15 @@
     <meta charset="utf-8">
     <title>Gif With Friends</title>
     <% include ../partials/header.ejs %>
+    <script type="text/javascript">
+     function gifMe() {
+          var query = $('.form-control').val();
+          $str = "gif/" + "?query=" + query;
+          $.get($str, function(data){
+            document.getElementById("gifs").innerHTML = data;
+          })
+     }
+</script>
   </head>
   <body>
     <% include ../partials/nav.ejs %>
@@ -21,8 +30,11 @@
     <div class="input-group">
       <input type="text" class="form-control" placeholder="Enter a question...">
       <span class="input-group-btn">
-        <button class="btn btn-primary" id="send" type="button">Send</button>
+        <button class="btn btn-primary" id="send" type="button" onclick="gifMe()">Send</button>
       </span>
+    </div><br><br>
+    <div class="" id="gifs">
+
     </div>
     <% include ../partials/footer.ejs %>
 
@@ -44,6 +56,6 @@
 
         websocket.onerror = function(evt) {
         };
-    </script>
+  </script>
   </body>
 </html>
