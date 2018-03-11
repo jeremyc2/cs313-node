@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
-express()
+var server = express()
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
@@ -30,32 +30,44 @@ express()
     var GphApiClient = require('giphy-js-sdk-core')
     client = GphApiClient("0AeM29IB0MkPlZDlBXgCKQlvZWGpm01J")
 
-  var WebSocketServer = require('ws').Server,
-      wss = new WebSocketServer({
-          port: 8080
-      });
+    const io = require('socket.io')(server);
 
-  wss.broadcast = function broadcast(data) {
-    wss.clients.forEach(function each(client) {
-          client.send(data);
-          console.log('broadcasting... ');
+    io.on('connection', (socket) => {
+      console.log('Client connected');
+      socket.on ('chatResponse', function (msg) {
+          console.log("chat response...");
+          io.sockets.emit ('updateConversation', msg.message);
       });
-  };
+      socket.on('disconnect', () => console.log('Client disconnected'));
+    });
 
-  wss.on('connection', function(ws) {
-      ws.on('message', function(msg) {
-          console.log('message ' + msg);
-          data = JSON.parse(msg);
-          if (data.message) wss.broadcast(data.message);
-      });
-  });
+    setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+
+  // var WebSocketServer = require('ws').Server,
+  //     wss = new WebSocketServer({
+  //         port: 8080
+  //     });
+
+  // wss.broadcast = function broadcast(data) {
+  //   wss.clients.forEach(function each(client) {
+  //         client.send(data);
+  //         console.log('broadcasting... ');
+  //     });
+  // };
+  //
+  // wss.on('connection', function(ws) {
+  //     ws.on('message', function(msg) {
+  //         console.log('message ' + msg);
+  //         data = JSON.parse(msg);
+  //         if (data.message) wss.broadcast(data.message);
+  //     });
+  // });
 
 function gifSearch(req, res, query, callback){
   client.search('gifs', {"q": query})
     .then((response) => {
       response.data.forEach((gifObject) => {
         var url = gifObject.images.fixed_height.gif_url;
-        console.log(url);
         callback(req, res, url);
       })
       res.end();

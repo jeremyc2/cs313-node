@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Gif With Friends</title>
     <% include ../partials/header.ejs %>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
      function gifMe() {
           var query = $('.form-control').val();
@@ -43,10 +44,14 @@
           $('.form-control').focus();
         });
 
-
-        websocket = new WebSocket("ws://localhost:8080/");
         $('#send').click(function() {
             send();
+        });
+
+        var socket = io();
+
+        socket.on('time', function(timeString) {
+            // console.log('Server time: ' + timeString);
         });
 
         $(".form-control").on('keyup', function (e) {
@@ -58,20 +63,17 @@
         function send(){
           // name = $('#name').val() ? $('#name').val() : 'Anonymous';
           gifMe();
-          websocket.send(JSON.stringify({
-              message: $('.form-control').val()
-          }));
+          var message = $('.form-control').val()
+          socket.emit('chatResponse', {message: message});
           $('.form-control').focus();
           $('.form-control').val('');
           return false;
         }
 
-        websocket.onmessage = function(evt) {
-          $('#messages').append($('<li>').html(evt.data));
-        };
+        socket.on('updateConversation', function (msg){
+          $('#messages').append($('<li>').html(msg));
+        });
 
-        websocket.onerror = function(evt) {
-        };
 
   </script>
   </body>
