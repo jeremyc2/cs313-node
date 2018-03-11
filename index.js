@@ -1,3 +1,30 @@
+// // sending to sender-client only
+// socket.emit('message', "this is a test");
+//
+// // sending to all clients, include sender
+// io.emit('message', "this is a test");
+//
+// // sending to all clients except sender
+// socket.broadcast.emit('message', "this is a test");
+//
+// // sending to all clients in 'game' room(channel) except sender
+// socket.broadcast.to('game').emit('message', 'nice game');
+//
+// // sending to all clients in 'game' room(channel), include sender
+// io.in('game').emit('message', 'cool game');
+//
+// // sending to sender client, only if they are in 'game' room(channel)
+// socket.to('game').emit('message', 'enjoy the game');
+//
+// // sending to all clients in namespace 'myNamespace', include sender
+// io.of('myNamespace').emit('message', 'gg');
+//
+// // sending to individual socketid
+// socket.broadcast.to(socketid).emit('message', 'for your eyes only');
+
+
+
+
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
@@ -36,32 +63,10 @@ var server = express()
       console.log('Client connected');
       socket.on ('chatResponse', function (msg) {
           console.log("chat response...");
-          io.sockets.emit ('updateConversation', msg.message);
+          socket.broadcast.emit('updateConversation', msg.message);
       });
       socket.on('disconnect', () => console.log('Client disconnected'));
     });
-
-    setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-
-  // var WebSocketServer = require('ws').Server,
-  //     wss = new WebSocketServer({
-  //         port: 8080
-  //     });
-
-  // wss.broadcast = function broadcast(data) {
-  //   wss.clients.forEach(function each(client) {
-  //         client.send(data);
-  //         console.log('broadcasting... ');
-  //     });
-  // };
-  //
-  // wss.on('connection', function(ws) {
-  //     ws.on('message', function(msg) {
-  //         console.log('message ' + msg);
-  //         data = JSON.parse(msg);
-  //         if (data.message) wss.broadcast(data.message);
-  //     });
-  // });
 
 function gifSearch(req, res, query, callback){
   client.search('gifs', {"q": query})

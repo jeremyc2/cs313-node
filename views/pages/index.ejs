@@ -50,10 +50,6 @@
 
         var socket = io();
 
-        socket.on('time', function(timeString) {
-            // console.log('Server time: ' + timeString);
-        });
-
         $(".form-control").on('keyup', function (e) {
             if (e.keyCode == 13) {
                 send();
@@ -64,13 +60,16 @@
           // name = $('#name').val() ? $('#name').val() : 'Anonymous';
           gifMe();
           var message = $('.form-control').val()
+          $('#messages').append($('<li>').html(message));
           socket.emit('chatResponse', {message: message});
           $('.form-control').focus();
           $('.form-control').val('');
+          $(".form-control").attr("placeholder", "Enter a question...");
           return false;
         }
 
         socket.on('updateConversation', function (msg){
+          $(".form-control").attr("placeholder", "Search for a gif...");
           $('#messages').append($('<li>').html(msg));
         });
 
