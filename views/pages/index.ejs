@@ -46,9 +46,11 @@
         });
 
         $("#gifs").on('click', '.gif', function () {
-          var link = this.src;
-          document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
-          sendGifLink(link);
+          if(!$("#send").hasClass('disabled')){
+            var link = this.src;
+            document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
+            sendGifLink(link);
+          }
         });
 
         $(".input-group-btn").on('click', '.btn-primary', function () {
