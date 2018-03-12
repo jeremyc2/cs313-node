@@ -83,7 +83,9 @@
 
         function changeToGifSearch(){
           $(".form-control").attr("placeholder", "Search for a gif...");
-          $("#send").toggleClass('btn-primary btn-success');
+          if ($("#send").hasClass('btn-primary')) {
+            $("#send").toggleClass('btn-primary btn-success');
+          }
           document.getElementById('send').innerHTML = "Search";
           $('.form-control').focus();
           $('.form-control').val('');
@@ -91,7 +93,9 @@
 
         function changeToTextMessage(){
           $(".form-control").attr("placeholder", "Enter a question...");
-          $("#send").toggleClass('btn-success btn-primary');
+          if ($("#send").hasClass('btn-success')) {
+            $("#send").toggleClass('btn-primary btn-success');
+          }
           document.getElementById('send').innerHTML = "Send";
           $('.form-control').focus();
           $('.form-control').val('');
