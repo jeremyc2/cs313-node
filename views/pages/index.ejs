@@ -46,7 +46,7 @@
         });
 
         $("#gifs").on('click', '.gif', function () {
-          if(!$("#send").hasClass('disabled')){
+          if($("#send").hasClass('btn-success')){
             var link = this.src;
             document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
             sendGifLink(link);
