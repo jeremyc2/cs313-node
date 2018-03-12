@@ -8,6 +8,7 @@
     <script type="text/javascript">
      function gifMe() {
           var query = $('.form-control').val();
+          $('.form-control').val('');
           $str = "gif/" + "?query=" + query;
           $.get($str, function(data){
             document.getElementById("gifs").innerHTML = data;
@@ -51,26 +52,28 @@
         });
 
         $(".input-group-btn").on('click', '.btn-primary', function () {
-          send();
-          changeToGifSearch();
+          if(!$("#send").hasClass('disabled')){
+            send();
+          }
         });
 
         $(".input-group-btn").on('click', '.btn-success', function () {
-          gifMe();
-          changeToTextMessage();
+          if(!$("#send").hasClass('disabled')){
+            gifMe();
+          }
         });
 
         $(".form-control").on('keyup', function (e) {
+          if(this.disabled == false){
             if (e.keyCode == 13) {
                 if($("#send").hasClass("btn-primary")){
                   send();
-                  changeToGifSearch();
                 }
                 else {
                   gifMe();
-                  changeToTextMessage();
                 }
             }
+          }
         });
 
         var socket = io();
@@ -91,16 +94,30 @@
           $('.form-control').val('');
         }
 
+        function disableSend(){
+          $(".form-control").prop('disabled', true);
+          $("#send").addClass('disabled');
+          $('.form-control').val('');
+        }
+
+        function enableSend(){
+          $(".form-control").prop('disabled', false);
+          $("#send").removeClass('disabled');
+          $('.form-control').val('');
+        }
+
         function send(){
           // name = $('#name').val() ? $('#name').val() : 'Anonymous';
           var message = $('.form-control').val()
           $('#messages').append($('<li>').html(message));
           socket.emit('question', {message: message});
+          disableSend();
           return false;
         }
 
         function sendGifLink(link){
           socket.emit('gif', {link: link});
+          changeToTextMessage();
           return false;
         }
 
@@ -108,8 +125,10 @@
           var type = msg.type;
           console.log(type);
           if (type == "question") {
+            enableSend();
             var message = msg.message;
             $('#messages').append($('<li>').html(message));
+            changeToGifSearch();
           }
           if (type == "gif") {
             var link = msg.link;
