@@ -31,7 +31,7 @@
     <div class="input-group">
       <input type="text" class="form-control" placeholder="Enter a question...">
       <span class="input-group-btn">
-        <button class="btn btn-primary" id="send" type="button" onclick="gifMe()">Send</button>
+        <button class="btn btn-primary" id="send" type="button">Send</button>
       </span>
     </div><br><br>
     <div class="" id="gifs">
@@ -44,35 +44,79 @@
           $('.form-control').focus();
         });
 
-        $('#send').click(function() {
-            send();
+        $("#gifs").on('click', '.gif', function () {
+          var link = this.src;
+          document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
+          sendGifLink(link);
+        });
+
+        $(".input-group-btn").on('click', '.btn-primary', function () {
+          send();
+          changeToGifSearch();
+        });
+
+        $(".input-group-btn").on('click', '.btn-success', function () {
+          gifMe();
+          changeToTextMessage();
+        });
+
+        $(".form-control").on('keyup', function (e) {
+            if (e.keyCode == 13) {
+                if($("#send").hasClass("btn-primary")){
+                  send();
+                  changeToGifSearch();
+                }
+                else {
+                  gifMe();
+                  changeToTextMessage();
+                }
+            }
         });
 
         var socket = io();
 
-        $(".form-control").on('keyup', function (e) {
-            if (e.keyCode == 13) {
-                send();
-            }
-        });
+        function changeToGifSearch(){
+          $(".form-control").attr("placeholder", "Search for a gif...");
+          $("#send").toggleClass('btn-primary btn-success');
+          document.getElementById('send').innerHTML = "Search";
+          $('.form-control').focus();
+          $('.form-control').val('');
+        }
+
+        function changeToTextMessage(){
+          $(".form-control").attr("placeholder", "Enter a question...");
+          $("#send").toggleClass('btn-success btn-primary');
+          document.getElementById('send').innerHTML = "Send";
+          $('.form-control').focus();
+          $('.form-control').val('');
+        }
 
         function send(){
           // name = $('#name').val() ? $('#name').val() : 'Anonymous';
-          gifMe();
           var message = $('.form-control').val()
           $('#messages').append($('<li>').html(message));
-          socket.emit('chatResponse', {message: message});
-          $('.form-control').focus();
-          $('.form-control').val('');
-          $(".form-control").attr("placeholder", "Enter a question...");
+          socket.emit('question', {message: message});
+          return false;
+        }
+
+        function sendGifLink(link){
+          socket.emit('gif', {link: link});
           return false;
         }
 
         socket.on('updateConversation', function (msg){
-          $(".form-control").attr("placeholder", "Search for a gif...");
-          $('#messages').append($('<li>').html(msg));
-        });
+          var type = msg.type;
+          console.log(type);
+          if (type == "question") {
+            var message = msg.message;
+            $('#messages').append($('<li>').html(message));
+          }
+          if (type == "gif") {
+            var link = msg.link;
+            document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
+          }
 
+        });
 
   </script>
   </body>

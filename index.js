@@ -61,9 +61,15 @@ var server = express()
 
     io.on('connection', (socket) => {
       console.log('Client connected');
-      socket.on ('chatResponse', function (msg) {
+      socket.on ('question', function (msg) {
           console.log("chat response...");
-          socket.broadcast.emit('updateConversation', msg.message);
+          msg = {message: msg.message, type: "question"};
+          socket.broadcast.emit('updateConversation', msg);
+      });
+      socket.on ('gif', function (msg) {
+          console.log("posting a gif with url: " + msg.link);
+          msg = {link: msg.link, type: "gif"};
+          socket.broadcast.emit('updateConversation', msg);
       });
       socket.on('disconnect', () => console.log('Client disconnected'));
     });
