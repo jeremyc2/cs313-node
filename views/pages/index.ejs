@@ -24,7 +24,8 @@
       is a new game where players take turns asking and answering simple "get to know
       you questions." The catch is you can only respond to questions with a GIF. Let's get
       creative!
-    </div>
+    </div><br>
+    <div id="numPlayers" style="padding: 20px;">You are the only active player.</div><br>
     <div class="well">
       <ul id="messages"></ul>
     </div>
@@ -125,7 +126,6 @@
 
         socket.on('updateConversation', function (msg){
           var type = msg.type;
-          console.log(type);
           if (type == "question") {
             enableSend();
             var message = msg.message;
@@ -137,6 +137,14 @@
             document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
           }
 
+        });
+
+        socket.on('connectCounter', function (msg){
+          console.log("There are " + msg + " players currently active.");
+          if(msg == 1)
+            document.getElementById("numPlayers").innerHTML = "You are the only active player in this channel.";
+          else
+            document.getElementById("numPlayers").innerHTML = "There are " + msg + " players currently active in this channel.";
         });
 
   </script>

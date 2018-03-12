@@ -58,9 +58,13 @@ var server = express()
     client = GphApiClient("0AeM29IB0MkPlZDlBXgCKQlvZWGpm01J")
 
     const io = require('socket.io')(server);
+    var connectCounter = 0;
 
     io.on('connection', (socket) => {
+      connectCounter++;
       console.log('Client connected');
+      console.log('Total connected: ' + connectCounter);
+      sendConnectCounter();
       socket.on ('question', function (msg) {
           console.log("chat response...");
           msg = {message: msg.message, type: "question"};
@@ -71,8 +75,14 @@ var server = express()
           msg = {link: msg.link, type: "gif"};
           socket.broadcast.emit('updateConversation', msg);
       });
-      socket.on('disconnect', () => console.log('Client disconnected'));
+      socket.on('disconnect', () => {console.log('Client disconnected');
+      connectCounter--;
+      sendConnectCounter();});
     });
+
+    function sendConnectCounter(){
+        io.emit('connectCounter', connectCounter);
+    }
 
 function gifSearch(req, res, query, callback){
   client.search('gifs', {"q": query})
