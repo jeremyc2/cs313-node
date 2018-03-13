@@ -55,7 +55,7 @@ var server = express()
 
 
     var GphApiClient = require('giphy-js-sdk-core')
-    client = GphApiClient("0AeM29IB0MkPlZDlBXgCKQlvZWGpm01J")
+    client = GphApiClient("")
 
     const io = require('socket.io')(server);
     var connectCounter = 0;
