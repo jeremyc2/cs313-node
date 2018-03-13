@@ -6,6 +6,7 @@
     <% include ../partials/header.ejs %>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
+     var username = "Jeremy";
      function gifMe() {
           var query = $('.form-control').val();
           $('.form-control').val('');
@@ -43,113 +44,128 @@
 
     <script>
         $( document ).ready(function() {
+          var socket = io();
+
           $('.form-control').focus();
-        });
+          joinRoom();
 
-        $("#gifs").on('click', '.gif', function () {
-          if($("#send").hasClass('btn-success')){
-            var link = this.src;
-            document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
-            sendGifLink(link);
-          }
-        });
-
-        $(".input-group-btn").on('click', '.btn-primary', function () {
-          if(!$("#send").hasClass('disabled')){
-            send();
-          }
-        });
-
-        $(".input-group-btn").on('click', '.btn-success', function () {
-          if(!$("#send").hasClass('disabled')){
-            gifMe();
-          }
-        });
-
-        $(".form-control").on('keyup', function (e) {
-          if(this.disabled == false){
-            if (e.keyCode == 13) {
-                if($("#send").hasClass("btn-primary")){
-                  send();
-                }
-                else {
-                  gifMe();
-                }
+          $("#gifs").on('click', '.gif', function () {
+            if($("#send").hasClass('btn-success')){
+              var link = this.src;
+              document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
+              sendGifLink(link);
             }
+          });
+
+          $(".input-group-btn").on('click', '.btn-primary', function () {
+            if(!$("#send").hasClass('disabled')){
+              send();
+            }
+          });
+
+          $(".input-group-btn").on('click', '.btn-success', function () {
+            if(!$("#send").hasClass('disabled')){
+              gifMe();
+            }
+          });
+
+          $('.tab').on('click', '.nv', function () {
+            username = this.innerHTML;
+            username = username.substring(1, username.length - 82);
+            joinRoom();
+          });
+
+            $(".form-control").on('keyup', function (e) {
+              if(this.disabled == false){
+                if($(".form-control").val() != ""){
+                  if (e.keyCode == 13) {
+                      if($("#send").hasClass("btn-primary")){
+                        send();
+                      }
+                      else {
+                        gifMe();
+                      }
+                  }
+                }
+              }
+            });
+
+          function changeToGifSearch(){
+            $(".form-control").attr("placeholder", "Search for a gif...");
+            if ($("#send").hasClass('btn-primary')) {
+              $("#send").toggleClass('btn-primary btn-success');
+            }
+            document.getElementById('send').innerHTML = "Search";
+            $('.form-control').focus();
+            $('.form-control').val('');
           }
-        });
 
-        var socket = io();
-
-        function changeToGifSearch(){
-          $(".form-control").attr("placeholder", "Search for a gif...");
-          if ($("#send").hasClass('btn-primary')) {
-            $("#send").toggleClass('btn-primary btn-success');
+          function changeToTextMessage(){
+            $(".form-control").attr("placeholder", "Enter a question...");
+            if ($("#send").hasClass('btn-success')) {
+              $("#send").toggleClass('btn-primary btn-success');
+            }
+            document.getElementById('send').innerHTML = "Send";
+            $('.form-control').focus();
+            $('.form-control').val('');
           }
-          document.getElementById('send').innerHTML = "Search";
-          $('.form-control').focus();
-          $('.form-control').val('');
-        }
 
-        function changeToTextMessage(){
-          $(".form-control").attr("placeholder", "Enter a question...");
-          if ($("#send").hasClass('btn-success')) {
-            $("#send").toggleClass('btn-primary btn-success');
+          function disableSend(){
+            $(".form-control").prop('disabled', true);
+            $("#send").addClass('disabled');
+            $('.form-control').val('');
           }
-          document.getElementById('send').innerHTML = "Send";
-          $('.form-control').focus();
-          $('.form-control').val('');
-        }
 
-        function disableSend(){
-          $(".form-control").prop('disabled', true);
-          $("#send").addClass('disabled');
-          $('.form-control').val('');
-        }
+          function enableSend(){
+            $(".form-control").prop('disabled', false);
+            $("#send").removeClass('disabled');
+            $('.form-control').val('');
+          }
 
-        function enableSend(){
-          $(".form-control").prop('disabled', false);
-          $("#send").removeClass('disabled');
-          $('.form-control').val('');
-        }
+          function joinRoom(){
+            socket.emit('create',username);
+          }
 
-        function send(){
-          // name = $('#name').val() ? $('#name').val() : 'Anonymous';
-          var message = $('.form-control').val()
-          $('#messages').append($('<li>').html(message));
-          socket.emit('question', {message: message});
-          disableSend();
-          return false;
-        }
-
-        function sendGifLink(link){
-          socket.emit('gif', {link: link});
-          changeToTextMessage();
-          return false;
-        }
-
-        socket.on('updateConversation', function (msg){
-          var type = msg.type;
-          if (type == "question") {
-            enableSend();
-            var message = msg.message;
+          function send(){
+            // name = $('#name').val() ? $('#name').val() : 'Anonymous';
+            var message = $('.form-control').val()
             $('#messages').append($('<li>').html(message));
-            changeToGifSearch();
-          }
-          if (type == "gif") {
-            var link = msg.link;
-            document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
+            socket.emit('question', {message: message});
+            disableSend();
+            return false;
           }
 
+          function sendGifLink(link){
+            socket.emit('gif', {link: link});
+            changeToTextMessage();
+            return false;
+          }
+
+          socket.on('updateConversation', function (msg){
+            var type = msg.type;
+            if (type == "question") {
+              enableSend();
+              var message = msg.message;
+              $('#messages').append($('<li>').html(message));
+              changeToGifSearch();
+            }
+            if (type == "gif") {
+              var link = msg.link;
+              document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
+            }
+
+          });
+
+          socket.on('connectCounter', function (msg){
+            console.log("There are " + msg + " players currently active.");
+            if(msg == 1)
+              document.getElementById("numPlayers").innerHTML = "You are the only active player in this channel.";
+            else
+              document.getElementById("numPlayers").innerHTML = "There are " + msg + " players currently active in this channel.";
+          });
         });
 
-        socket.on('connectCounter', function (msg){
-          console.log("There are " + msg + " players currently active.");
-          if(msg == 1)
-            document.getElementById("numPlayers").innerHTML = "You are the only active player in this channel.";
-          else
-            document.getElementById("numPlayers").innerHTML = "There are " + msg + " players currently active in this channel.";
-        });
+
 
   </script>
   </body>

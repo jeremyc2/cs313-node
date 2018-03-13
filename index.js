@@ -65,16 +65,35 @@ var server = express()
       console.log('Client connected');
       console.log('Total connected: ' + connectCounter);
       sendConnectCounter();
-      socket.on ('question', function (msg) {
-          console.log("chat response...");
-          msg = {message: msg.message, type: "question"};
-          socket.broadcast.emit('updateConversation', msg);
+      socket.on('create', function (room) {
+        var rooms = socket.rooms;
+        for (var chatroom in rooms) {
+          console.log("leaving chatroom: " + chatroom);
+          socket.leave(chatroom);
+        }
+        console.log("created room: " + room);
+        socket.join(room);
       });
-      socket.on ('gif', function (msg) {
+      function postQuestion(msg) {
+            var rooms = socket.rooms;
+            for (var room in rooms) {
+            console.log("chat response...");
+            msg = {message: msg.message, type: "question"};
+            console.log("posting to room: " + room);
+            socket.broadcast.to(room).emit('updateConversation', msg);
+          };
+      };
+      function postGif(msg) {
+          var rooms = socket.rooms;
+          for (var room in rooms) {
           console.log("posting a gif with url: " + msg.link);
           msg = {link: msg.link, type: "gif"};
-          socket.broadcast.emit('updateConversation', msg);
-      });
+          console.log("posting to room: " + room);
+          socket.broadcast.to(room).emit('updateConversation', msg);
+        };
+      };
+      socket.on ('question', postQuestion);
+      socket.on ('gif', postGif);
       socket.on('disconnect', () => {console.log('Client disconnected');
       connectCounter--;
       sendConnectCounter();});
