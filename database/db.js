@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
-var url = "mongodb+srv://Admin:test123@cluster0-ulu7j.mongodb.net/test";
+var url = "";
 
 function createUserTable(callback){
     MongoClient.connect(url, function(err, db) {
