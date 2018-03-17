@@ -137,7 +137,7 @@ function insertIntoConversation(userOne, userTwo, text, callback){
         dbo.collection("conversation").insertOne({
             playerOne: userOne.userID,
             playerTwo: userTwo.userID,
-            text: "Welcome to a new conversation!"
+            text: text
           }, function(err, res) {
           if (err) throw err;
           console.log("Hello Forth");
@@ -160,7 +160,7 @@ function insertIntoConversation(userOne, userTwo, text, callback){
   };
 
   // var users = [{ username: "username11"}, { username: "Company Inc"}];
-  // createConversation(users);
+  // createConversation(users, "hi");
 
 function getConversations(callback){
     MongoClient.connect(url, function(err, db) {
