@@ -22,8 +22,9 @@
 // // sending to individual socketid
 // socket.broadcast.to(socketid).emit('message', 'for your eyes only');
 
+//TODO: Take the view out of here.
 
-
+var db = require('./controllers/db.js');
 
 const express = require('express')
 const path = require('path')
@@ -51,6 +52,8 @@ var server = express()
         count++;
     });
   })
+  .get('/:user', db.getUser)
+  .get('/:conversation', db.getConversation)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
