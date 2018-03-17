@@ -24,7 +24,8 @@
 
 //TODO: Take the view out of here.
 
-var db = require('./controllers/db.js');
+var user = require('./controller/user.js');
+var conversation = require('./controller/conversation.js');
 
 const express = require('express')
 const path = require('path')
@@ -52,8 +53,10 @@ var server = express()
         count++;
     });
   })
-  .get('/:user', db.getUser)
-  .get('/:conversation', db.getConversation)
+  .get('/user/:id', user.handleUser)
+  .get('/userList', user.handleUserList)
+  .get('/conversation/:id', conversation.handleConversation)
+  .get('/conversationList', conversation.handleConversationList)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
