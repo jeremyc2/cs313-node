@@ -175,6 +175,34 @@ function getConversations(callback){
   });
 };
 
+//TODO: not syncronous like maybe it should be...
+function getUserConversations(user, callback){
+    MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    query = {playerOne: user.user};
+    var dbo = db.db("mydb");
+    data = [];
+    dbo.collection("conversation").find(query).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      data.push(result);
+    });
+    query = {playerTwo: user.user};
+    dbo.collection("conversation").find(query).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      data.push(result);
+    });
+    callback(null, data);
+    db.close();
+  });
+};
+
+// playerOne: 5aaa0802da95766b10bb2917,
+//     playerTwo: 5aaa070c0b8fe06af8421303,
+
+
+
 function getConversation(query, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
