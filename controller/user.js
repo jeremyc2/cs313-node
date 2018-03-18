@@ -22,3 +22,19 @@ module.exports = {
 	handleUserList: handleUserList,
   handleUser: handleUser
 };
+
+// getConversationListFromUser(user)
+// 	-returns a list of conversations from the database
+
+//
+// verifyLogin(username, password)
+// -return bool of whether or not the credentials were correct. Verifies with the database
+//
+
+//
+// addUser(user)
+// 	-adds the user to the database. Returns bool of success or failure
+//
+// removeUser(user)
+// 	- removes the user from the database. Returns bool of success or failure
+//
