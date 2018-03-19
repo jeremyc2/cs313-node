@@ -70,5 +70,6 @@ module.exports = {
 	handleUserList: handleUserList,
   handleUser: handleUser,
 	createUser: createUser,
-	passwordVerify: passwordVerify
+	passwordVerify: passwordVerify,
+	deleteUser: deleteUser
 };
