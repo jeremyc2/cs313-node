@@ -38,11 +38,14 @@ function getUsers(callback){
     dbo.collection("users").find({}).toArray(function(err, result) {
       if (err) throw err;
       console.log(result);
-      callback(null, result);
+      if (callback)
+        callback(null, result);
       db.close();
     });
   });
 };
+
+// getUsers(null);
 
 function getUser(query, callback){
     MongoClient.connect(url, function(err, db) {
@@ -50,14 +53,23 @@ function getUser(query, callback){
     if (query.hasOwnProperty("_id"))
       query = {_id:ObjectId(query._id)};
     var dbo = db.db("mydb");
-    dbo.collection("users").find(query).toArray(function(err, result) {
+    dbo.collection("users").findOne(query, function(err, result) {
       if (err) throw err;
-      console.log(result);
-      callback(null, result);
+      console.log("Query: " + query.username + "\nResult: " + result);
+      if (callback){
+        console.log("calling callback... ");
+        callback(null, result);
+      }
+      else {
+        console.log("NO CALLBACK");
+      }
       db.close();
     });
   });
 };
+
+// getUser({username: 'username11'}, null);
+
 
 function getUserID(query, text, index, callback){
     var userID;
@@ -142,15 +154,22 @@ function insertIntoConversation(userOne, userTwo, text, callback){
           if (err) throw err;
           console.log("Hello Forth");
           console.log(res);
-          callback(res);
+          if (callback) callback(null, res);
           db.close();
           });
         });
   };
 
+  var GlobalCallback = null;
+
   function createConversation(users, text, callback, index = 0){
+    if (!callback)
+      callback = GlobalCallback;
+    if (!callback)
+      throw "NO CALLBACK";
     if(index < 2){
       console.log("Hello 1." + index);
+      GlobalCallback = callback;
       getUserID(users, text, index, createConversation);
     }
     else {

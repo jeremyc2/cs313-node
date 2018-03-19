@@ -1,4 +1,44 @@
 var db = require('../database/db.js');
+const bcrypt = require('bcrypt');
+
+// { username: "username11", passwordHashed: "Timothy",  firstName: "Bob", lastName: "Marley"}
+function createUser(request, response){
+	let passwordHashed = bcrypt.hashSync(request.body.password, 10);
+	console.log("Creating a new user with username: " + request.body.username);
+	db.createNewUser({
+		username: request.body.username,
+		passwordHashed: passwordHashed,
+		firstName: request.body.firstName,
+		lastName: request.body.lastName
+	},
+		function(error, result) {
+			if (error) throw error;
+
+			response.json({success: true});
+
+	});
+}
+
+function passwordVerify (request, response)
+{
+	var password = request.query.password;
+	var query = {username: request.query.username};
+
+	function bcrptVfy(error, result) {
+				console.log("hello from passwordVerify bcrypt ");
+				bcrypt.compare(password, result.passwordHashed, function(err, res) {
+			  if(res) {
+			   // Passwords match
+				 response.json({success: true});
+			  } else {
+			   // Passwords don't match
+				 response.json({success: false});
+			  }
+			});
+	};
+
+	db.getUser(query, bcrptVfy);
+}
 
 function handleUserList(request, response) {
 	console.log("Returning the user list");
@@ -20,21 +60,14 @@ function handleUser(request, response) {
 
 module.exports = {
 	handleUserList: handleUserList,
-  handleUser: handleUser
+  handleUser: handleUser,
+	createUser: createUser,
+	passwordVerify: passwordVerify
 };
 
 // getConversationListFromUser(user)
 // 	-returns a list of conversations from the database
 
-//
-// verifyLogin(username, password)
-// -return bool of whether or not the credentials were correct. Verifies with the database
-//
-
-//
-// addUser(user)
-// 	-adds the user to the database. Returns bool of success or failure
-//
 // removeUser(user)
 // 	- removes the user from the database. Returns bool of success or failure
 //

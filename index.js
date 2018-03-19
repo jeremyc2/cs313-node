@@ -2,12 +2,19 @@
 var user = require('./controller/user.js');
 var conversation = require('./controller/conversation.js');
 
+
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
+var bodyParser = require('body-parser')
+
 var server = express()
   .use(express.static(path.join(__dirname, 'public')))
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+  }))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
@@ -22,6 +29,9 @@ var server = express()
   .get('/userList', user.handleUserList)
   .get('/conversation/:id', conversation.handleConversation)
   .get('/conversationList', conversation.handleConversationList)
+  .get('/verifyPassword', user.passwordVerify)
+  .post('/user', user.createUser)
+  .post('/conversation', conversation.createConversation)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
