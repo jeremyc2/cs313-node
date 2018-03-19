@@ -22,6 +22,14 @@ function handleConversationList(request, response) {
 	});
 }
 
+function handleUsersConversationList(request, response) {
+	console.log("Returning the conversation list");
+
+	db.getUserConversations({user: request.params.userID}, function(error, result) {
+		response.json(result);
+	});
+}
+
 function handleConversation(request, response) {
 	var id = request.params.id;
 
@@ -35,7 +43,8 @@ function handleConversation(request, response) {
 module.exports = {
 	handleConversationList: handleConversationList,
   handleConversation: handleConversation,
-	createConversation: createConversation
+	createConversation: createConversation,
+	handleUsersConversationList: handleUsersConversationList
 };
 
 // getConversationText(conversation)

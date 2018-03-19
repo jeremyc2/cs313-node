@@ -2,6 +2,8 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 var url = "mongodb+srv://Admin:test123@cluster0-ulu7j.mongodb.net/test";
 
+// db.collection.drop();
+
 function createUserTable(callback){
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
@@ -55,7 +57,7 @@ function getUser(query, callback){
     var dbo = db.db("mydb");
     dbo.collection("users").findOne(query, function(err, result) {
       if (err) throw err;
-      console.log("Query: " + query.username + "\nResult: " + result);
+      console.log(result);
       if (callback){
         console.log("calling callback... ");
         callback(null, result);
@@ -198,26 +200,25 @@ function getConversations(callback){
 function getUserConversations(user, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
-    query = {playerOne: user.user};
+    var query = {playerOne: ObjectId(user.user)};
     var dbo = db.db("mydb");
-    data = [];
+    var data = [];
     dbo.collection("conversation").find(query).toArray(function(err, result) {
       if (err) throw err;
-      console.log(result);
       data.push(result);
+      var query = {playerTwo: ObjectId(user.user)};
+      dbo.collection("conversation").find(query).toArray(function(err, result) {
+        if (err) throw err;
+        data.push(result);
+        console.log(data);
+        callback(null, data);
+        db.close();
+      });
     });
-    query = {playerTwo: user.user};
-    dbo.collection("conversation").find(query).toArray(function(err, result) {
-      if (err) throw err;
-      console.log(result);
-      data.push(result);
-    });
-    callback(null, data);
-    db.close();
   });
 };
 
-// playerOne: 5aaa0802da95766b10bb2917,
+// getUserConversations({user: "5aaa0802da95766b10bb2917"},function (){console.log("Testing...")});
 //     playerTwo: 5aaa070c0b8fe06af8421303,
 
 
@@ -277,6 +278,7 @@ module.exports = {
   createConversationTable: createConversationTable,
   createConversation: createConversation,
   getConversations: getConversations,
+  getUserConversations: getUserConversations,
   getConversation: getConversation,
   deleteConversation: deleteConversation,
   deleteConversation: deleteConversation

@@ -29,7 +29,7 @@ function passwordVerify (request, response)
 				bcrypt.compare(password, result.passwordHashed, function(err, res) {
 			  if(res) {
 			   // Passwords match
-				 response.json({success: true});
+				 response.json({success: true, username: result.username, id:result._id});
 			  } else {
 			   // Passwords don't match
 				 response.json({success: false});
