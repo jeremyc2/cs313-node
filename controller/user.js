@@ -57,6 +57,14 @@ function handleUser(request, response) {
 	});
 }
 
+function deleteUser(request, response) {
+	var id = request.body.id;
+	var query = {_id:id};
+	db.deleteUser(query, function(error, result) {
+		response.json(result);
+	});
+}
+
 
 module.exports = {
 	handleUserList: handleUserList,
@@ -64,10 +72,3 @@ module.exports = {
 	createUser: createUser,
 	passwordVerify: passwordVerify
 };
-
-// getConversationListFromUser(user)
-// 	-returns a list of conversations from the database
-
-// removeUser(user)
-// 	- removes the user from the database. Returns bool of success or failure
-//

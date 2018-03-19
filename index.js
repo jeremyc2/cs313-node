@@ -33,6 +33,7 @@ var server = express()
   .get('/verifyPassword', user.passwordVerify)
   .post('/user', user.createUser)
   .post('/conversation', conversation.createConversation)
+  .delete('/user', user.deleteUser)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 

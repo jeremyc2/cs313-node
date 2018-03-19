@@ -95,6 +95,8 @@ function deleteUser(query, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db("mydb");
+    if (query.hasOwnProperty("_id"))
+      query = {_id:ObjectId(query._id)};
     dbo.collection("users").deleteOne(query, function(err, obj) {
       if (err) throw err;
       console.log("1 user deleted");
@@ -243,7 +245,7 @@ function deleteConversation(query, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     if (query.hasOwnProperty("_id"))
-      query[index] = {_id:ObjectId(query._id)};
+      query = {_id:ObjectId(query._id)};
     var dbo = db.db("mydb");
     dbo.collection("conversation").deleteOne(query, function(err, obj) {
       if (err) throw err;
@@ -280,6 +282,5 @@ module.exports = {
   getConversations: getConversations,
   getUserConversations: getUserConversations,
   getConversation: getConversation,
-  deleteConversation: deleteConversation,
   deleteConversation: deleteConversation
 };

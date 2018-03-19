@@ -39,19 +39,22 @@ function handleConversation(request, response) {
 	});
 }
 
+function deleteConversation(request, response) {
+	var id = request.body.id;
+	var query = {_id:id};
+	db.deleteConversation(query, function(error, result) {
+		response.json(result);
+	});
+}
+
 
 module.exports = {
 	handleConversationList: handleConversationList,
   handleConversation: handleConversation,
 	createConversation: createConversation,
-	handleUsersConversationList: handleUsersConversationList
+	handleUsersConversationList: handleUsersConversationList,
+	deleteConversation: deleteConversation
 };
-
-// getConversationText(conversation)
-// 	-returns the text of the conversation from the database
-
-// addLineToConversation(conversation, line)
-// 	- return bool of whether or not it succeeded in updating the database
 
 // removeConversation(conversation)
 // - removes the conversation from the database. Returns bool of success or failure
