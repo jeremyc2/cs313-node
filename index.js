@@ -34,6 +34,7 @@ var server = express()
   .post('/user', user.createUser)
   .post('/conversation', conversation.createConversation)
   .delete('/user', user.deleteUser)
+  .delete('/conversation', conversation.deleteConversation)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
 
