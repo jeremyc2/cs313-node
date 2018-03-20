@@ -47,13 +47,29 @@ function deleteConversation(request, response) {
 	});
 }
 
+function updateConversationThread(request, response){
+	var id = request.body.id;
+	var line = request.body.line;
+	var query = {_id:id};
+	db.getConversation({_id:id}, function(error, result) {
+		if (result !== null){
+			var text = result.text + "/n" + line;
+			var newvalues = { $set: {text: text} };
+			db.updateConversation(query, newvalues, function(error, result) {
+				response.json(result);
+			});
+		};
+	})
+}
+
 
 module.exports = {
 	handleConversationList: handleConversationList,
   handleConversation: handleConversation,
 	createConversation: createConversation,
 	handleUsersConversationList: handleUsersConversationList,
-	deleteConversation: deleteConversation
+	deleteConversation: deleteConversation,
+	updateConversationThread: updateConversationThread
 };
 
 // removeConversation(conversation)

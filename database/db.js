@@ -232,7 +232,7 @@ function getConversation(query, callback){
     if (query.hasOwnProperty("_id"))
       query = {_id:ObjectId(query._id)};
     console.log(query);
-    dbo.collection("conversation").find(query).toArray(function(err, result) {
+    dbo.collection("conversation").findOne(query, function(err, result) {
       if (err) throw err;
       console.log(result);
       callback(null, result);
@@ -259,7 +259,7 @@ function updateConversation(query, newvalues, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     if (query.hasOwnProperty("_id"))
-      query[index] = {_id:ObjectId(query._id)};
+      query = {_id:ObjectId(query._id)};
     var dbo = db.db("mydb");
     dbo.collection("conversation").updateOne(query, newvalues, function(err, res) {
       if (err) throw err;
@@ -282,5 +282,6 @@ module.exports = {
   getConversations: getConversations,
   getUserConversations: getUserConversations,
   getConversation: getConversation,
-  deleteConversation: deleteConversation
+  deleteConversation: deleteConversation,
+  updateConversation: updateConversation
 };

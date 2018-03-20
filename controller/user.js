@@ -5,17 +5,21 @@ const bcrypt = require('bcrypt');
 function createUser(request, response){
 	let passwordHashed = bcrypt.hashSync(request.body.password, 10);
 	console.log("Creating a new user with username: " + request.body.username);
-	db.createNewUser({
-		username: request.body.username,
-		passwordHashed: passwordHashed,
-		firstName: request.body.firstName,
-		lastName: request.body.lastName
-	},
-		function(error, result) {
-			if (error) throw error;
+	db.getUser({_id:id}, function(error, result) {
+		if(result == null){
+			db.createNewUser({
+				username: request.body.username,
+				passwordHashed: passwordHashed,
+				firstName: request.body.firstName,
+				lastName: request.body.lastName
+			},
+				function(error, result) {
+					if (error) throw error;
 
-			response.json({success: true});
+					response.json({success: true});
 
+			});
+		};
 	});
 }
 
