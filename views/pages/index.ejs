@@ -8,12 +8,26 @@
     <script type="text/javascript">
      var username = "Jeremy";
      function gifMe() {
+          var count = 0;
+          var view = "";
           var query = $('.form-control').val();
           $('.form-control').val('');
           $str = "gif/" + "?query=" + query;
-          $.get($str, function(data){
-            document.getElementById("gifs").innerHTML = data;
-          })
+          $.get($str, function(response){
+            response.forEach((gifObject) => {
+              var url = gifObject.url;
+              if (count > 2)
+                count = 0;
+              if (count == 0)
+                view += "<div class=\"row\">";
+              view += "<div class=\"col-sm-4\"><img src=\"" + url + "\" class=\"gif\"></div>";
+              if (count == 2)
+                view += "</div>";
+              count++;
+            });
+            console.log("WE HAVE A RESULT");
+            document.getElementById("gifs").innerHTML = view;
+          });
      }
 </script>
   </head>

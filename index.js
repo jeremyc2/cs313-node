@@ -1,7 +1,7 @@
 
 var user = require('./controller/user.js');
 var conversation = require('./controller/conversation.js');
-
+var gif = null;
 
 const express = require('express')
 const path = require('path')
@@ -19,7 +19,6 @@ var server = express()
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
   .get('/gif', function (req, res){
-    var gif = require('./controller/message.js')(server);
     console.log('Searching for a gif...');
     var query = req.query.query;
     console.log('The query is ' + query);
@@ -36,9 +35,10 @@ var server = express()
   .delete('/user', user.deleteUser)
   .delete('/conversation', conversation.deleteConversation)
   .put('/conversationThread', conversation.updateConversationThread)
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+  .listen(PORT, () => {console.log(`Listening on ${ PORT }`);})
 
-
+  gif = require('./controller/message.js')(server);
+  
   //TODO: DELETE ME
   // if (count > 2)
   //   count = 0;

@@ -5,6 +5,7 @@ module.exports = function(server) {
     client = GphApiClient("0AeM29IB0MkPlZDlBXgCKQlvZWGpm01J")
 
     const io = require('socket.io')(server);
+    console.log("Hello from message.js");
     var connectCounter = 0;
 
     io.on('connection', (socket) => {
