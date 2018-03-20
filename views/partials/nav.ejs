@@ -8,18 +8,6 @@
       <li class="tab">
         <a  class="nv" href="#"> Jeremy &nbsp;<span href="#" class="close" data-dismiss="tab" aria-label="close">&times;</span></a>
       </li>
-      <li class="tab">
-        <a  class="nv" href="#"> Justin &nbsp;<span href="#" class="close" data-dismiss="tab" aria-label="close">&times;</span></a>
-      </li>
-      <li class="tab">
-        <a  class="nv" href="#"> Sue &nbsp;<span href="#" class="close" data-dismiss="tab" aria-label="close">&times;</span></a>
-      </li>
-      <li class="tab">
-        <a  class="nv" href="#"> Tim &nbsp;<span href="#" class="close" data-dismiss="tab" aria-label="close">&times;</span></a>
-      </li>
-      <li class="tab">
-        <a class="nv" href="#"> Sam &nbsp;<span href="#" class="close" data-dismiss="tab" aria-label="close">&times;</span></a>
-      </li>
       <li class="dropdown">
         <a  class="nv" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> More <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -35,5 +23,12 @@
 </nav>
 
 <script type="text/javascript">
-  
+function populateNavBar(){
+  $.get('/ConversationList/5aaa0802da95766b10bb2917', function(response){
+    console.log("Navbar populated. Here's an example of output:\nPlayer One: " + response[0][0].playerOne + "\nPlayer Two: " + response[0][0].playerTwo);
+  });
+}
+$(document).ready(function(){
+  populateNavBar();
+});
 </script>
