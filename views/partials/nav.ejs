@@ -13,19 +13,35 @@
           <ul class="dropdown-menu" role="menu">
           </ul>
       </li>
-      <li>
+      <li class="addConversation">
         <a href="#"><span class="glyphicon glyphicon-plus"></span></a>
       </li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar-right login">
       <li class="navbar-right">
-        <a href="#"><span class="glyphicon glyphicon-user"></span> Account</a>
+        <a href="#" data-toggle="modal" data-target=".bs-modal-sm"><span class="glyphicon glyphicon-user"></span> Account</a>
       </li>
     </ul>
   </div>
 </nav>
 
+<div class="modal fade bs-modal-sm" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" style="padding:30px;text-align:center;">
+      <img src="https://media.giphy.com/media/luvcXlAjCTZKw/giphy.gif"><br><br>
+      <form class="loginform">
+        <label for="username">Username</label><br>
+        <input type="text" name="username" id="username"><br>
+        <label for="password">Password</label><br>
+        <input type="text" name="password" id="password"><br><br>
+        <button type="button" class="btn-primary login-btn">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript">
+var userID = "";
 jQuery.each( [ "put", "delete" ], function( i, method ) {
   jQuery[ method ] = function( url, data, callback, type ) {
     if ( jQuery.isFunction( data ) ) {
@@ -44,7 +60,8 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
   };
 });
 function populateNavBar(){
-  $.get('/ConversationList/5aaa0802da95766b10bb2917', function(response){
+  var url = "/ConversationList/" + userID;
+  $.get(url, function(response){
       var id = 0;
       response[0].forEach((messageObject, index) => {
         id = messageObject._id;
@@ -66,11 +83,26 @@ function populateNavBar(){
 $(document).on('click', '.close', function(){
     var id = this.id.substring(1, this.id.length);
     $("#" + id).remove();
-    // TODO: pass body parameters
     $.delete('/conversation', {id: id} ,function(response){
       console.log("Conversation: " + id + " is deleted");
       console.log(response);
     });
+})
+$(document).on('click', '.addConversation', function(){
+    console.log("Creating new user...");
+})
+$(document).on('click', '.login', function(){
+    console.log("logging on...");
+})
+$(document).on('click', '.login-btn', function(){
+    console.log("logging on with credentials...");
+    var password = document.getElementById("password").value;
+    var username = document.getElementById("username").value;
+    $.get('/verifyPassword',{username: username, password: password} ,function(response){
+      console.log(response);
+      userID = response.id;
+    });
+
 })
 $(document).ready(function(){
   populateNavBar();
