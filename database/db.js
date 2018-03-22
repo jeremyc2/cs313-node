@@ -250,6 +250,7 @@ function deleteConversation(query, callback){
     dbo.collection("conversation").deleteOne(query, function(err, obj) {
       if (err) throw err;
       console.log("1 conversation deleted");
+      callback(null, obj);
       db.close();
     });
   });

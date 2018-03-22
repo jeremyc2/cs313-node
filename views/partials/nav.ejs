@@ -26,20 +26,37 @@
 </nav>
 
 <script type="text/javascript">
+jQuery.each( [ "put", "delete" ], function( i, method ) {
+  jQuery[ method ] = function( url, data, callback, type ) {
+    if ( jQuery.isFunction( data ) ) {
+      type = type || callback;
+      callback = data;
+      data = undefined;
+    }
+
+    return jQuery.ajax({
+      url: url,
+      type: method,
+      dataType: type,
+      data: data,
+      success: callback
+    });
+  };
+});
 function populateNavBar(){
   $.get('/ConversationList/5aaa0802da95766b10bb2917', function(response){
       var id = 0;
       response[0].forEach((messageObject, index) => {
         id = messageObject._id;
-        id = id.substring(id.length - 4, id.length);
+        idSubstring = id.substring(id.length - 4, id.length);
         if (index < 3){
           $('.tab').last().after(
-            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + id + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
+            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
           );
         }
         else {
           $('.dropdown-menu').append(
-            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + id + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
+            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
           );
         }
       });
@@ -49,8 +66,13 @@ function populateNavBar(){
 $(document).on('click', '.close', function(){
     var id = this.id.substring(1, this.id.length);
     $("#" + id).remove();
-});
+    // TODO: pass body parameters
+    $.delete('/conversation', {id: id} ,function(response){
+      console.log("Conversation: " + id + " is deleted");
+      console.log(response);
+    });
+})
 $(document).ready(function(){
   populateNavBar();
-});
+})
 </script>
