@@ -38,13 +38,3 @@ var server = express()
   .listen(PORT, () => {console.log(`Listening on ${ PORT }`);})
 
   gif = require('./controller/message.js')(server);
-  
-  //TODO: DELETE ME
-  // if (count > 2)
-  //   count = 0;
-  // if (count == 0)
-  //   res.write("<div class=\"row\">");
-  // res.write("<div class=\"col-sm-4\"><img src=\"" + url + "\" class=\"gif\"></div>");
-  // if (count == 2)
-  //   res.write("</div>");
-  // count++;

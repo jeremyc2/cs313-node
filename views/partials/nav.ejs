@@ -6,12 +6,15 @@
       </li>
       <li>&emsp;&emsp;&emsp;&emsp;&emsp;</li>
       <li class="tab">
-        <a  class="nv" href="#"> General Gameroom &nbsp;<span href="#" class="close" data-dismiss="tab" aria-label="close">&times;</span></a>
+        <a  class="nv" href="#"> General Gameroom &nbsp;</a>
       </li>
       <li class="dropdown">
         <a  class="nv" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> More <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
           </ul>
+      </li>
+      <li>
+        <a href="#"><span class="glyphicon glyphicon-plus"></span></a>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -25,25 +28,28 @@
 <script type="text/javascript">
 function populateNavBar(){
   $.get('/ConversationList/5aaa0802da95766b10bb2917', function(response){
-    response[0].forEach((messageObject, index) => {
-    var playerOne = messageObject.playerOne;
-    var playerTwo = messageObject.playerTwo;
-    var partOne = playerOne.substring(playerOne.length - 4, playerOne.length);
-    var partTwo = playerTwo.substring(playerTwo.length - 4, playerTwo.length);
-    if (index < 3){
-      $('.tab').last().after(
-        "<li class=\"tab\"><a  class=\"nv\" href=\"#\">" + partOne + partTwo + "&nbsp;<span href=\"#\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
-      );
-    }
-    else {
-      $('.dropdown-menu').append(
-        "<li class=\"tab\"><a  class=\"nv\" href=\"#\">" + partOne + partTwo + "&nbsp;<span href=\"#\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
-      );
-    }
-  });
-    console.log("Navbar populated. Here's an example of output:\nPlayer One: " + response[0][0].playerOne + "\nPlayer Two: " + response[0][0].playerTwo);
-  });
+      var id = 0;
+      response[0].forEach((messageObject, index) => {
+        id = messageObject._id;
+        id = id.substring(id.length - 4, id.length);
+        if (index < 3){
+          $('.tab').last().after(
+            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + id + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
+          );
+        }
+        else {
+          $('.dropdown-menu').append(
+            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + id + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
+          );
+        }
+      });
+        console.log("Navbar populated. Here's an example of output:\nConversation ID= " + id);
+    });
 }
+$(document).on('click', '.close', function(){
+    var id = this.id.substring(1, this.id.length);
+    $("#" + id).remove();
+});
 $(document).ready(function(){
   populateNavBar();
 });
