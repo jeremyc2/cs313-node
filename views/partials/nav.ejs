@@ -14,7 +14,7 @@
           </ul>
       </li>
       <li class="addConversation">
-        <a href="#"><span class="glyphicon glyphicon-plus"></span></a>
+        <a href="#" data-toggle="modal" data-target=".bs-modal-conversation"><span class="glyphicon glyphicon-plus"></span></a>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right login">
@@ -28,13 +28,41 @@
 <div class="modal fade bs-modal-sm" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content" style="padding:30px;text-align:center;">
-      <img src="https://media.giphy.com/media/luvcXlAjCTZKw/giphy.gif"><br><br>
+      <img src="logo.gif"><br><br>
       <form class="loginform">
+        <h3><b>Login</b></h3><br>
         <label for="username">Username</label><br>
         <input type="text" name="username" id="username"><br>
         <label for="password">Password</label><br>
-        <input type="text" name="password" id="password"><br><br>
+        <input type="password" name="password" id="password"><br><br>
         <button type="button" class="btn-primary login-btn">Login</button>
+      </form><br><br>
+      <form class="createUserForm">
+        <h3><b>Create a New Account</b></h3><br>
+        <label for="firstName">First Name</label><br>
+        <input type="text" name="firstName" id="firstName"><br>
+        <label for="lastName">Last Name</label><br>
+        <input type="text" name="lastName" id="lastName"><br>
+        <label for="newUsername">Username</label><br>
+        <input type="text" name="newUsername" id="newUsername"><br>
+        <label for="newPassword">Password</label><br>
+        <input type="password" name="newPassword" id="newPassword"><br><br>
+        <button type="button" class="btn-primary create-account-btn">Create New Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bs-modal-conversation" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content" style="padding:30px;text-align:center;">
+      <form class="Conversationform">
+        <h3><b>Start a New Conversation</b></h3><br>
+        <label for="friendUsername">Enter the username of your friend</label><br>
+        <input type="text" name="friendUsername" id="friendUsername"><br>
+        <label for="initialMessage">Start off with an invitation</label><br>
+        <textarea name="initialMessage" id="initialMessage"></textarea><br>
+        <button type="button" class="btn-primary newConversation-btn">Let's Go</button>
       </form>
     </div>
   </div>
@@ -89,10 +117,10 @@ $(document).on('click', '.close', function(){
     });
 })
 $(document).on('click', '.addConversation', function(){
-    console.log("Creating new user...");
+    console.log("Opening new conversation dialog...");
 })
 $(document).on('click', '.login', function(){
-    console.log("logging on...");
+    console.log("Opening login dialog...");
 })
 $(document).on('click', '.login-btn', function(){
     console.log("logging on with credentials...");
