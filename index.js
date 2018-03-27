@@ -44,10 +44,15 @@ var server = express()
   var id = "0";
   if (req.session.id)
     id = req.session.id;
-  console.log("Pageviews: " + req.session.views[pathname] + "for user with id: " + id);
+  console.log("Pageviews: " + req.session.views[pathname] + " for user with id: " + id);
   next()
 })
-  .get('/', (req, res) => {res.render('pages/index');})
+  .get('/', (req, res) => {
+    if (req.session.id)
+      res.render('pages/index', {id: req.session.id});
+    else
+      res.render('pages/index');
+  })
   .get('/gif', function (req, res){
     console.log('Searching for a gif...');
     var query = req.query.query;
@@ -55,9 +60,9 @@ var server = express()
     gif.gifSearch(req, res, query);
   })
   .get('/user/:id', user.handleUser)
-  // .get('/userList', user.handleUserList)
+  .get('/userList', user.handleUserList)
   .get('/conversation/:id', conversation.handleConversation)
-  // .get('/conversationList', conversation.handleConversationList)
+  .get('/conversationList', conversation.handleConversationList)
   .get('/conversationList/:userID', conversation.handleUsersConversationList)
   .get('/verifyPassword', user.passwordVerify)
   .post('/user', user.createUser)

@@ -2,16 +2,26 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 var url = "mongodb+srv://Admin:test123@cluster0-ulu7j.mongodb.net/test";
 
-// db.collection.drop();
 
-function createUserTable(callback){
+    // MongoClient.connect(url, function(err, db) {
+    //   if (err) throw err;
+    //   var dbo = db.db("mydb");
+    //   dbo.dropDatabase(function(err, res) {
+    //     if (err) throw err;
+    //     console.log("Everything deleted");
+    //     db.close();
+    //   });
+    // });
+    // createUserTable();
+    // createConversationTable();
+
+function createUserTable(){
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("mydb");
       dbo.createCollection("users", function(err, res) {
         if (err) throw err;
         console.log("User Table created!");
-        callback(null, res);
         db.close();
       });
     });
@@ -26,8 +36,7 @@ function createNewUser(user, callback){
     var dbo = db.db("mydb");
     dbo.collection("users").insertOne(user, function(err, res) {
       if (err) throw err;
-      console.log(res);
-      callback(null, res);
+      callback(null, res.ops[0]);
       db.close();
     });
   });
@@ -39,7 +48,6 @@ function getUsers(callback){
     var dbo = db.db("mydb");
     dbo.collection("users").find({}).toArray(function(err, result) {
       if (err) throw err;
-      console.log(result);
       if (callback)
         callback(null, result);
       db.close();
@@ -56,14 +64,12 @@ function getUser(query, callback){
       query = {_id:ObjectId(query._id)};
     var dbo = db.db("mydb");
     dbo.collection("users").findOne(query, function(err, result) {
+      console.log(JSON.stringify(query));
       if (err) throw err;
-      console.log(result);
       if (callback){
-        console.log("calling callback... ");
         callback(null, result);
       }
       else {
-        console.log("NO CALLBACK");
       }
       db.close();
     });
@@ -78,12 +84,11 @@ function getUserID(query, text, index, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     if (query[index].hasOwnProperty("_id"))
-      query[index] = {_id:ObjectId(query._id)};
+      query[index] = {_id:ObjectId(query[index]._id)};
     var dbo = db.db("mydb");
     dbo.collection("users").findOne(query[index], (function(err, result) {
       if (err) throw err;
       userID = {userID: result._id};
-      console.log(userID);
       db.close();
       query[index] = userID;
       callback(query, text, null, index + 1);
@@ -128,14 +133,13 @@ text			text
 
 *****************************************************************************/
 
-function createConversationTable(callback){
+function createConversationTable(){
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("mydb");
       dbo.createCollection("conversation", function(err, res) {
         if (err) throw err;
         console.log("Conversation Table created!");
-        callback(null, res);
         db.close();
       });
     });
@@ -147,7 +151,6 @@ function createConversationTable(callback){
 function insertIntoConversation(userOne, userTwo, text, callback){
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
-    console.log("Hello Third");
     var dbo = db.db("mydb");
     // console.log("hello" + userOne + " & " + userTwo);
         dbo.collection("conversation").insertOne({
@@ -156,8 +159,6 @@ function insertIntoConversation(userOne, userTwo, text, callback){
             text: text
           }, function(err, res) {
           if (err) throw err;
-          console.log("Hello Forth");
-          console.log(res);
           if (callback) callback(null, res);
           db.close();
           });
@@ -172,12 +173,10 @@ function insertIntoConversation(userOne, userTwo, text, callback){
     if (!callback)
       throw "NO CALLBACK";
     if(index < 2){
-      console.log("Hello 1." + index);
       GlobalCallback = callback;
       getUserID(users, text, index, createConversation);
     }
     else {
-      console.log("Hello Second");
       insertIntoConversation(users[0], users[1], text, callback)
     }
   };
@@ -191,7 +190,6 @@ function getConversations(callback){
     var dbo = db.db("mydb");
     dbo.collection("conversation").find({}).toArray(function(err, result) {
       if (err) throw err;
-      console.log(result);
       callback(null, result);
       db.close();
     });
@@ -212,7 +210,6 @@ function getUserConversations(user, callback){
       dbo.collection("conversation").find(query).toArray(function(err, result) {
         if (err) throw err;
         data.push(result);
-        console.log(data);
         callback(null, data);
         db.close();
       });
@@ -231,10 +228,8 @@ function getConversation(query, callback){
     var dbo = db.db("mydb");
     if (query.hasOwnProperty("_id"))
       query = {_id:ObjectId(query._id)};
-    console.log(query);
     dbo.collection("conversation").findOne(query, function(err, result) {
       if (err) throw err;
-      console.log(result);
       callback(null, result);
       db.close();
     });

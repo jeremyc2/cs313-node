@@ -35,7 +35,7 @@
         <input type="text" name="username" id="username"><br>
         <label for="password">Password</label><br>
         <input type="password" name="password" id="password"><br><br>
-        <button type="button" class="btn-primary login-btn">Login</button>
+        <button type="button" data-dismiss="modal" class="btn-primary login-btn">Login</button>
       </form><br><br>
       <form class="createUserForm">
         <h3><b>Create a New Account</b></h3><br>
@@ -47,7 +47,7 @@
         <input type="text" name="newUsername" id="newUsername"><br>
         <label for="newPassword">Password</label><br>
         <input type="password" name="newPassword" id="newPassword"><br><br>
-        <button type="button" class="btn-primary create-account-btn">Create New Account</button>
+        <button type="button" data-dismiss="modal" class="btn-primary create-account-btn">Create New Account</button>
       </form>
     </div>
   </div>
@@ -62,7 +62,7 @@
         <input type="text" name="friendUsername" id="friendUsername"><br>
         <label for="initialMessage">Start off with an invitation</label><br>
         <textarea name="initialMessage" id="initialMessage"></textarea><br>
-        <button type="button" class="btn-primary newConversation-btn">Let's Go</button>
+        <button type="button" class="btn-primary newConversation-btn" data-dismiss="modal">Let's Go</button>
       </form>
     </div>
   </div>
@@ -88,7 +88,11 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
   };
 });
 function populateNavBar(){
+  <% if(typeof id != 'undefined') { %>
+    userID = <%- JSON.stringify(id) %>;
+  <% } %>
   var url = "/ConversationList/" + userID;
+  console.log(url);
   $.get(url, function(response){
       var id = 0;
       response[0].forEach((messageObject, index) => {
@@ -114,6 +118,26 @@ $(document).on('click', '.close', function(){
     $.delete('/conversation', {id: id} ,function(response){
       console.log("Conversation: " + id + " is deleted");
       console.log(response);
+    });
+})
+$(document).on('click', '.newConversation-btn', function(){
+    console.log("Start new conversation button clicked.");
+    var username = document.getElementById("friendUsername").value;
+    var text = document.getElementById("initialMessage").value;
+    $.post("/conversation",{ username: username, text: text},function(response){
+      console.log(response);
+    });
+})
+//TODO: login after creating account
+$(document).on('click', '.create-account-btn', function(){
+    console.log("Start new account button clicked.");
+    var firstName = document.getElementById("firstName").value;
+    var lastName = document.getElementById("lastName").value;
+    var username = document.getElementById("newUsername").value;
+    var password = document.getElementById("newPassword").value;
+    $.post("/user",{ username: username, password: password, firstName: firstName, lastName: lastName},function(response){
+      console.log(response);
+      userID = response.id;
     });
 })
 $(document).on('click', '.addConversation', function(){

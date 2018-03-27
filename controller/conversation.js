@@ -4,7 +4,7 @@ var db = require('../database/db.js');
 // var users = [{ username: "username11"}, { username: "Company Inc"}];
 // createConversation(users, "hi");
 function createConversation(request, response){
-	db.createConversation(([{username: request.body.username1}, {username: request.body.username2}]),
+	db.createConversation(([{username: request.session.username}, {username: request.body.username}]),
 		request.body.text,
 		function (error, result) {
 			if (error) throw error;
@@ -23,7 +23,7 @@ function handleConversationList(request, response) {
 }
 
 function handleUsersConversationList(request, response) {
-	console.log("Returning the conversation list");
+	console.log("Returning the conversation list " + request.params.userID);
 
 	db.getUserConversations({user: request.params.userID}, function(error, result) {
 		response.json(result);

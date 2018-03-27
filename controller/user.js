@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 function createUser(request, response){
 	let passwordHashed = bcrypt.hashSync(request.body.password, 10);
 	console.log("Creating a new user with username: " + request.body.username);
-	db.getUser({_id:id}, function(error, result) {
+	db.getUser({username: request.body.username}, function(error, result) {
 		if(result == null){
 			db.createNewUser({
 				username: request.body.username,
@@ -15,8 +15,9 @@ function createUser(request, response){
 			},
 				function(error, result) {
 					if (error) throw error;
-
-					response.json({success: true});
+					request.session.username = result.username;
+					request.session.id = result._id;
+					response.json({success: true, username: result.username, id: result._id});
 
 			});
 		};
@@ -27,6 +28,7 @@ function passwordVerify (request, response)
 {
 	var password = request.query.password;
 	var query = {username: request.query.username};
+	console.log(JSON.stringify(query));
 
 	function bcrptVfy(error, result) {
 				console.log("hello from passwordVerify bcrypt ");
