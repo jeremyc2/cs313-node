@@ -33,6 +33,8 @@ function passwordVerify (request, response)
 				bcrypt.compare(password, result.passwordHashed, function(err, res) {
 			  if(res) {
 			   // Passwords match
+				 request.session.username = result.username;
+				 request.session.id = result._id;
 				 response.json({success: true, username: result.username, id:result._id});
 			  } else {
 			   // Passwords don't match
