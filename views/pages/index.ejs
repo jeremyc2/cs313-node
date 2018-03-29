@@ -60,6 +60,8 @@
         $( document ).ready(function() {
           var socket = io();
 
+          populateConversation();
+
           $('.form-control').focus();
           joinRoom();
 
@@ -178,7 +180,11 @@
           });
         });
 
-
+        function populateConversation(){
+            // $.get($str, function(response){
+            // TODO: getConversationText
+            // });
+        }
 
   </script>
   </body>

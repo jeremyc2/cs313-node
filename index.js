@@ -44,7 +44,6 @@ var server = express()
   var id = "0";
   if (req.session.id)
     id = req.session.id;
-  console.log("Pageviews: " + req.session.views[pathname] + " for user with id: " + id);
   next()
 })
   .get('/', (req, res) => {

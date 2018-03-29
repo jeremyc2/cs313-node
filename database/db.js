@@ -228,8 +228,10 @@ function getConversation(query, callback){
     if (err) throw err;
     var dbo = db.db("mydb");
     console.log(JSON.stringify(query));
-    if (query.hasOwnProperty("_id"))
-      query = {_id:ObjectId(query._id)};
+    if (query.hasOwnProperty("_id")){
+      if (query._id !== "Jeremy")
+        query = {_id:ObjectId(query._id)};
+    };
     dbo.collection("conversation").findOne(query, function(err, result) {
       if (err) throw err;
       callback(null, result);
