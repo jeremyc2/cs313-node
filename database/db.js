@@ -66,6 +66,7 @@ function getUser(query, callback){
     dbo.collection("users").findOne(query, function(err, result) {
       console.log(JSON.stringify(query));
       if (err) throw err;
+      console.log("This is the result of getUser: " + JSON.stringify(result));
       if (callback){
         callback(null, result);
       }
@@ -226,6 +227,7 @@ function getConversation(query, callback){
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db("mydb");
+    console.log(JSON.stringify(query));
     if (query.hasOwnProperty("_id"))
       query = {_id:ObjectId(query._id)};
     dbo.collection("conversation").findOne(query, function(err, result) {

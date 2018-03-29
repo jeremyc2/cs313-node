@@ -1,8 +1,9 @@
 
 module.exports = function(server) {
 
-    var GphApiClient = require('giphy-js-sdk-core')
-    client = GphApiClient("0AeM29IB0MkPlZDlBXgCKQlvZWGpm01J")
+    var GphApiClient = require('giphy-js-sdk-core');
+    var client = GphApiClient("0AeM29IB0MkPlZDlBXgCKQlvZWGpm01J");
+    const conversation = require('./conversation.js');
 
     const io = require('socket.io')(server);
     var connectCounter = 0;
@@ -28,6 +29,7 @@ module.exports = function(server) {
             msg = {message: msg.message, type: "question"};
             console.log("posting to room: " + room);
             socket.broadcast.to(room).emit('updateConversation', msg);
+            conversation.serverUpdateConversationThread(room, msg.message);
           };
       };
       function postGif(msg) {

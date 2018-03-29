@@ -100,12 +100,12 @@ function populateNavBar(){
         idSubstring = id.substring(id.length - 4, id.length);
         if (index < 3){
           $('.tab').last().after(
-            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
+            "<li class=\"tab\" id=\"t" + id + "\"><a  class=\"nv\" href=\"#\" id=\"" + id + "\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
           );
         }
         else {
           $('.dropdown-menu').append(
-            "<li class=\"tab\" id=\"" + id + "\"><a  class=\"nv\" href=\"#\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
+            "<li class=\"tab\" id=\"t" + id + "\"><a  class=\"nv\" id=\"" + id + "\" href=\"#\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
           );
         }
       });
@@ -114,7 +114,7 @@ function populateNavBar(){
 }
 $(document).on('click', '.close', function(){
     var id = this.id.substring(1, this.id.length);
-    $("#" + id).remove();
+    $("#t" + id).remove();
     $.delete('/conversation', {id: id} ,function(response){
       console.log("Conversation: " + id + " is deleted");
       console.log(response);

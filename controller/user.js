@@ -28,10 +28,10 @@ function passwordVerify (request, response)
 {
 	var password = request.query.password;
 	var query = {username: request.query.username};
-	console.log(JSON.stringify(query));
 
 	function bcrptVfy(error, result) {
 				console.log("hello from passwordVerify bcrypt ");
+				if (result)
 				bcrypt.compare(password, result.passwordHashed, function(err, res) {
 			  if(res) {
 			   // Passwords match
@@ -42,7 +42,10 @@ function passwordVerify (request, response)
 			   // Passwords don't match
 				 response.json({success: false});
 			  }
-			});
+			})
+			else {
+				response.json({success: false});
+			}
 	};
 
 	db.getUser(query, bcrptVfy);

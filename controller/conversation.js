@@ -53,7 +53,7 @@ function updateConversationThread(request, response){
 	var query = {_id:id};
 	db.getConversation({_id:id}, function(error, result) {
 		if (result !== null){
-			var text = result.text + "/n" + line;
+			var text = result.text + "\n" + line;
 			var newvalues = { $set: {text: text} };
 			db.updateConversation(query, newvalues, function(error, result) {
 				response.json(result);
@@ -62,6 +62,18 @@ function updateConversationThread(request, response){
 	})
 }
 
+function serverUpdateConversationThread(id, line){
+	var query = {_id:id};
+	db.getConversation({_id:id}, function(error, result) {
+		if (result !== null){
+			var text = result.text + "\n" + line;
+			var newvalues = { $set: {text: text} };
+			db.updateConversation(query, newvalues, function(error, result) {
+				if (error) throw error;
+			});
+		};
+	})
+}
 
 module.exports = {
 	handleConversationList: handleConversationList,
@@ -69,7 +81,8 @@ module.exports = {
 	createConversation: createConversation,
 	handleUsersConversationList: handleUsersConversationList,
 	deleteConversation: deleteConversation,
-	updateConversationThread: updateConversationThread
+	updateConversationThread: updateConversationThread,
+	serverUpdateConversationThread: serverUpdateConversationThread
 };
 
 // removeConversation(conversation)

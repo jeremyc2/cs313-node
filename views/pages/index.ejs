@@ -83,9 +83,8 @@
             }
           });
 
-          $('.tab').on('click', '.nv', function () {
-            username = this.innerHTML;
-            username = username.substring(1, username.length - 82);
+          $(document).on('click', '.nv', function () {
+            username = this.id;
             joinRoom();
           });
 
