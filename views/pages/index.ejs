@@ -6,7 +6,7 @@
     <% include ../partials/header.ejs %>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
-     var username = "Jeremy";
+     var username = "5abaa41467af70f26f2b6c3d";
      function gifMe() {
           var count = 0;
           var view = "";
@@ -33,15 +33,15 @@
   </head>
   <body>
     <% include ../partials/nav.ejs %>
+    <br><br>
     <div class="alert alert-info alert-dismissible">
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
       <strong>Welcome!</strong>  Gif with Friends
       is a new game where players take turns asking and answering simple "get to know
       you questions." The catch is you can only respond to questions with a GIF. Let's get
       creative!
-    </div><br>
-    <div id="numPlayers" style="padding: 20px;">You are the only active player.</div><br>
-    <div class="well">
+    </div>
+    <div class="well" id="well">
       <ul id="messages"></ul>
     </div>
     <br>
@@ -53,14 +53,17 @@
     </div><br><br>
     <div class="" id="gifs">
 
-    </div>
+    </div><br><br>
     <% include ../partials/footer.ejs %>
 
     <script>
         $( document ).ready(function() {
           var socket = io();
 
-          populateConversation();
+            function scrollToBottom() {
+              var bottom = $("#well").height();
+              $("#well").animate({ scrollTop: bottom + 200 }, 1000);
+             }
 
           $('.form-control').focus();
           joinRoom();
@@ -71,6 +74,7 @@
               document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
               sendGifLink(link);
             }
+            scrollToBottom();
           });
 
           $(".input-group-btn").on('click', '.btn-primary', function () {
@@ -139,12 +143,14 @@
 
           function joinRoom(){
             socket.emit('create',username);
+            populateConversation();
           }
 
           function send(){
             // name = $('#name').val() ? $('#name').val() : 'Anonymous';
             var message = $('.form-control').val()
             $('#messages').append($('<li>').html(message));
+            scrollToBottom();
             socket.emit('question', {message: message});
             disableSend();
             return false;
@@ -168,6 +174,7 @@
               var link = msg.link;
               document.getElementById("messages").innerHTML += "<img src=\'" + link + "\' >";
             }
+            scrollToBottom();
 
           });
 
@@ -178,13 +185,23 @@
             else
               document.getElementById("numPlayers").innerHTML = "There are " + msg + " players currently active in this channel.";
           });
+          function populateConversation(){
+              $.get('/conversation/' + username, function(response){
+              // TODO: getConversationText
+                console.log("Populating Conversation\nConversation ID: " + username);
+                var array = response.text.split(/(?:\r\n|\r|\n)/g);
+                array.forEach((object) => {
+                  if(object.substring(14, 31) == ".giphy.com/media/")
+                    object = "<img src=\'" + object + "\' >";
+                  else {
+                    console.log(object.substring(14, 31) + " " + ".giphy.com/media/");
+                  }
+                  $('#messages').append($('<li>').html(object));
+                });
+              });
+              scrollToBottom();
+          }
         });
-
-        function populateConversation(){
-            // $.get($str, function(response){
-            // TODO: getConversationText
-            // });
-        }
 
   </script>
   </body>

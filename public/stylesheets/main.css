@@ -8,6 +8,8 @@
   width: 85%;
   margin: auto;
   min-height: 25% !important;
+  overflow: scroll;
+  height: 400px;
 }
 .alert{
   font-size: 25px;
@@ -21,6 +23,7 @@ footer{
   width: 100%;
   bottom: 0px;
   padding: 20px;
+  z-index: 1000;
 }
 html,
 body {

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
   <div class="container">
     <ul class="nav navbar-nav">
       <li class="active">
@@ -95,6 +95,7 @@ function populateNavBar(){
   console.log(url);
   $.get(url, function(response){
       var id = 0;
+      if (typeof response[0] == 'function')
       response[0].forEach((messageObject, index) => {
         id = messageObject._id;
         idSubstring = id.substring(id.length - 4, id.length);
@@ -151,9 +152,11 @@ $(document).on('click', '.login-btn', function(){
     var password = document.getElementById("password").value;
     var username = document.getElementById("username").value;
     $.get('/verifyPassword',{username: username, password: password} ,function(response){
-      console.log(response);
+      console.log("This is the response from the login:\n" + JSON.stringify(response));
       userID = response.id;
     });
+    populateNavBar();
+    populateConversation();
 
 })
 $(document).ready(function(){

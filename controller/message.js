@@ -39,6 +39,7 @@ module.exports = function(server) {
           msg = {link: msg.link, type: "gif"};
           console.log("posting to room: " + room);
           socket.broadcast.to(room).emit('updateConversation', msg);
+          conversation.serverUpdateConversationThread(room, msg.link);
         };
       };
       socket.on ('question', postQuestion);
