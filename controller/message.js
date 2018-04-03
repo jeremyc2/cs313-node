@@ -19,7 +19,7 @@ module.exports = function(server) {
           console.log("leaving chatroom: " + chatroom);
           socket.leave(chatroom);
         }
-        console.log("created room: " + room);
+        console.log("created room: " + JSON.stringify(room));
         socket.join(room);
       });
       function postQuestion(msg) {

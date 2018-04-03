@@ -6,7 +6,7 @@
     <% include ../partials/header.ejs %>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
-     var username = "5abaa41467af70f26f2b6c3d";
+     var gameroomName = "5abaa41467af70f26f2b6c3d";
      function gifMe() {
           var count = 0;
           var view = "";
@@ -28,7 +28,15 @@
             console.log("WE HAVE A RESULT");
             document.getElementById("gifs").innerHTML = view;
           });
-     }
+     };
+     // for(var b in window) {
+     //   if(typeof b === 'string')
+     //    if(window.hasOwnProperty(b))
+     //      console.log(b);
+     //    else {
+     //      console.log("non-string: " + b);
+     //    }
+     // };
 </script>
   </head>
   <body>
@@ -60,6 +68,26 @@
         $( document ).ready(function() {
           var socket = io();
 
+          populateConversation = function (){
+              console.log("Populating Conversation");
+              document.getElementById("messages").innerHTML = "";
+              if(gameroomName)
+                $.get('/conversation/' + gameroomName, function(response){
+                // TODO: getConversationText
+                  console.log("Populating Conversation\nConversation ID: " + gameroomName);
+                  var array = response.text.split(/(?:\r\n|\r|\n)/g);
+                  array.forEach((object) => {
+                    if(object.substring(14, 31) == ".giphy.com/media/")
+                      object = "<img src=\'" + object + "\' >";
+                    else {
+                      console.log(object.substring(14, 31) + " " + ".giphy.com/media/");
+                    }
+                    $('#messages').append($('<li>').html(object));
+                  });
+                });
+              scrollToBottom();
+          }
+
             function scrollToBottom() {
               var bottom = $("#well").height();
               $("#well").animate({ scrollTop: bottom + 200 }, 1000);
@@ -90,8 +118,9 @@
           });
 
           $(document).on('click', '.nv', function () {
-            username = this.id;
-            joinRoom();
+            gameroomName = this.id;
+            if(gameroomName !== "")
+              joinRoom();
           });
 
             $(".form-control").on('keyup', function (e) {
@@ -142,7 +171,9 @@
           }
 
           function joinRoom(){
-            socket.emit('create',username);
+
+            console.log("gameroomName: " + gameroomName)
+            socket.emit('create',gameroomName);
             populateConversation();
           }
 
@@ -185,22 +216,6 @@
             else
               document.getElementById("numPlayers").innerHTML = "There are " + msg + " players currently active in this channel.";
           });
-          function populateConversation(){
-              $.get('/conversation/' + username, function(response){
-              // TODO: getConversationText
-                console.log("Populating Conversation\nConversation ID: " + username);
-                var array = response.text.split(/(?:\r\n|\r|\n)/g);
-                array.forEach((object) => {
-                  if(object.substring(14, 31) == ".giphy.com/media/")
-                    object = "<img src=\'" + object + "\' >";
-                  else {
-                    console.log(object.substring(14, 31) + " " + ".giphy.com/media/");
-                  }
-                  $('#messages').append($('<li>').html(object));
-                });
-              });
-              scrollToBottom();
-          }
         });
 
   </script>

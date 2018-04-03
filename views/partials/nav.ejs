@@ -5,7 +5,7 @@
         <a href="/"><span class="glyphicon glyphicon-home"></span> Gif with Friends</a>
       </li>
       <!-- <li>&emsp;&emsp;&emsp;&emsp;&emsp;</li> -->
-      <li class="tab">
+      <li class="tab firstTab">
         <a  class="nv" href="#"> General Gameroom &nbsp;</a>
       </li>
       <li class="dropdown">
@@ -19,7 +19,7 @@
     </ul>
     <ul class="nav navbar-nav navbar-right login">
       <li class="navbar-right">
-        <a href="#" data-toggle="modal" data-target=".bs-modal-sm"><span class="glyphicon glyphicon-user"></span> Account</a>
+        <a href="#" data-toggle="modal" data-target=".bs-modal-sm"><span class="glyphicon glyphicon-user"></span> <span id="userLogin">Login</span></a>
       </li>
     </ul>
   </div>
@@ -70,6 +70,7 @@
 
 <script type="text/javascript">
 var userID = "";
+var populateConversation = function(){console.log("the wrong populate conversation")};
 jQuery.each( [ "put", "delete" ], function( i, method ) {
   jQuery[ method ] = function( url, data, callback, type ) {
     if ( jQuery.isFunction( data ) ) {
@@ -88,15 +89,18 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
   };
 });
 function populateNavBar(){
+  if(userID == '')
   <% if(typeof id != 'undefined') { %>
     userID = <%- JSON.stringify(id) %>;
   <% } %>
   var url = "/ConversationList/" + userID;
-  console.log(url);
   $.get(url, function(response){
       var id = 0;
-      if (typeof response[0] == 'function')
+      if(userID != "5abaa40067af70f26f2b6c3c"){
+      console.log(url);
+      if (response[0])
       response[0].forEach((messageObject, index) => {
+        console.log("messageObjectID: " + messageObject._id);
         id = messageObject._id;
         idSubstring = id.substring(id.length - 4, id.length);
         if (index < 3){
@@ -109,7 +113,14 @@ function populateNavBar(){
             "<li class=\"tab\" id=\"t" + id + "\"><a  class=\"nv\" id=\"" + id + "\" href=\"#\">" + "Room: " + idSubstring + "&nbsp;<span href=\"#\" id=\"" + "c" + id + "\" class=\"close\" data-dismiss=\"tab\" aria-label=\"close\">&times;</span></a></li>"
           );
         }
-      });
+      });}
+      else{
+        console.log("EH: " + userID);
+        $( ".tab" ).each(function( index ) {
+          if(!$(this).hasClass("firstTab"))
+            $( this ).remove();});
+
+      };
         console.log("Navbar populated. Here's an example of output:\nConversation ID= " + id);
     });
 }
@@ -153,6 +164,13 @@ $(document).on('click', '.login-btn', function(){
     var username = document.getElementById("username").value;
     $.get('/verifyPassword',{username: username, password: password} ,function(response){
       console.log("This is the response from the login:\n" + JSON.stringify(response));
+      if (response.success) {
+        document.getElementById("userLogin").innerHTML = response.username;
+        console.log("Login succeeded! Username: " + response.username);
+      }
+      else {
+        console.log("Login failed!");
+      };
       userID = response.id;
     });
     populateNavBar();
